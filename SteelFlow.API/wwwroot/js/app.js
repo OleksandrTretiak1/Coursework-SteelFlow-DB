@@ -300,7 +300,7 @@ function orderItemRow(i, products) {
         <select class="form-control" onchange="updateOrderSummary()" id="oiProd${i}">
         <option value="">-- Товар --</option>${products.map(p => `<option value="${p.productId}" data-price="${p.pricePerUnit}" data-unit="${p.unit}">${p.name} (${money(p.pricePerUnit)}/${p.unit})</option>`).join('')}</select></div>
         <div class="form-group" style="margin:0"><input type="number" step="0.001" min="0.001" class="form-control" id="oiQty${i}" value="1" onchange="updateOrderSummary()"></div>
-        <button class="btn btn-danger btn-sm" onclick="removeOrderItem(${i})" style="height:38px">✕</button></div>`;
+        <button class="btn btn-danger btn-sm" onclick="removeOrderItem(${i})" style="height:38px; padding:0; justify-content:center;">✕</button></div>`;
 }
 
 function addOrderItem() {

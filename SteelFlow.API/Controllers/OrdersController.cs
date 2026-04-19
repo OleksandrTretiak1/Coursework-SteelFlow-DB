@@ -87,22 +87,32 @@ public class OrdersController : ControllerBase
     [HttpPut("{id}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
     {
-        var order = await _context.Orders.FindAsync(id);
-        if (order == null) return NotFound();
-
-        order.Status = status;
-        await _context.SaveChangesAsync();
-        return NoContent();
+        try
+        {
+            await _orderService.UpdateOrderStatusAsync(id, status);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var order = await _context.Orders.FindAsync(id);
-        if (order == null) return NotFound();
-
-        _context.Orders.Remove(order);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        try
+        {
+            await _orderService.DeleteOrderAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

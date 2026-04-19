@@ -67,4 +67,56 @@ public class OrderService : IOrderService
 
         return order;
     }
+
+    public async Task UpdateOrderStatusAsync(int id, string status)
+    {
+        var order = await _context.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.OrderId == id);
+        if (order == null) throw new KeyNotFoundException($"Order {id} not found.");
+
+        bool isCanceling = status == "скасовано";
+        bool wasCanceled = order.Status == "скасовано";
+
+        if (isCanceling && !wasCanceled)
+        {
+            foreach (var item in order.OrderItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null) product.StockQuantity += item.Quantity;
+            }
+        }
+        else if (!isCanceling && wasCanceled)
+        {
+            foreach (var item in order.OrderItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    if (product.StockQuantity < item.Quantity)
+                        throw new InvalidOperationException($"Not enough stock to uncancel order for product '{product.Name}'.");
+                    product.StockQuantity -= item.Quantity;
+                }
+            }
+        }
+
+        order.Status = status;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteOrderAsync(int id)
+    {
+        var order = await _context.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.OrderId == id);
+        if (order == null) throw new KeyNotFoundException($"Order {id} not found.");
+
+        if (order.Status != "скасовано")
+        {
+            foreach (var item in order.OrderItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null) product.StockQuantity += item.Quantity;
+            }
+        }
+
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
+    }
 }

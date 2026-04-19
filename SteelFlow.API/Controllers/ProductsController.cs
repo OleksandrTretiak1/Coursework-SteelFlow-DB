@@ -22,6 +22,7 @@ public class ProductsController : ControllerBase
     {
         return await _context.Products
             .Include(p => p.Category)
+            .OrderBy(p => p.ProductId)
             .ToListAsync();
     }
 
