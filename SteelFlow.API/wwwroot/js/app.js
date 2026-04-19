@@ -359,7 +359,15 @@ async function viewOrder(id) {
         `<div style="margin-bottom:16px"><strong>Клієнт:</strong> ${o.client?.companyName || ''}<br>
         <strong>Працівник:</strong> ${o.employee ? o.employee.lastName + ' ' + o.employee.firstName : ''}<br>
         <strong>Дата:</strong> ${new Date(o.orderDate).toLocaleString('uk-UA')}<br>
-        <strong>Статус:</strong> ${statusBadge(o.status)}</div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+            <strong>Статус:</strong>
+            <select class="form-control" style="width:auto; padding:4px 10px;" onchange="updateOrderStatus(${o.orderId}, this.value)">
+                <option value="нове" ${o.status==='нове'?'selected':''}>нове</option>
+                <option value="в обробці" ${o.status==='в обробці'?'selected':''}>в обробці</option>
+                <option value="завершено" ${o.status==='завершено'?'selected':''}>завершено</option>
+                <option value="скасовано" ${o.status==='скасовано'?'selected':''}>скасовано</option>
+            </select>
+        </div></div>
         <table><thead><tr><th>Товар</th><th>К-сть</th><th>Ціна</th><th>Знижка</th><th>Сума</th></tr></thead><tbody>${items}</tbody></table>
         <div class="order-summary"><div class="line total"><span>Загалом</span><span>${money(o.totalAmount)}</span></div></div>`,
         `<button class="btn btn-secondary" onclick="closeModal()">Закрити</button>`);
@@ -368,6 +376,15 @@ async function viewOrder(id) {
 async function deleteOrder(id) {
     if (!confirm('Видалити замовлення?')) return;
     await api(`/orders/${id}`, { method: 'DELETE' }); toast('Видалено'); renderOrders();
+}
+
+async function updateOrderStatus(id, status) {
+    try {
+        await api(`/orders/${id}/status`, { method: 'PUT', body: status });
+        toast('Статус оновлено');
+        renderOrders();
+        closeModal();
+    } catch (e) { toast(e.message, 'error'); }
 }
 
 loadEmployeeSelect();
