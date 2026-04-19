@@ -21,46 +21,58 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Order>>> GetAll()
+    public async Task<ActionResult> GetAll()
     {
-        return await _context.Orders
+        var orders = await _context.Orders
             .Include(o => o.Client)
             .Include(o => o.Employee)
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
             .OrderByDescending(o => o.OrderDate)
+            .Select(o => new {
+                o.OrderId, o.ClientId, o.EmployeeId, o.OrderDate, o.TotalAmount, o.Status,
+                Client = new { o.Client.ClientId, o.Client.CompanyName, o.Client.DiscountPercent },
+                Employee = new { o.Employee.EmployeeId, o.Employee.FirstName, o.Employee.LastName },
+                OrderItems = o.OrderItems.Select(oi => new {
+                    oi.OrderItemId, oi.ProductId, oi.Quantity, oi.UnitPrice, oi.DiscountPercent, oi.LineTotal,
+                    Product = new { oi.Product.ProductId, oi.Product.Name, oi.Product.Unit }
+                })
+            })
             .ToListAsync();
+        return Ok(orders);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Order>> GetById(int id)
+    public async Task<ActionResult> GetById(int id)
     {
         var order = await _context.Orders
             .Include(o => o.Client)
             .Include(o => o.Employee)
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
-            .FirstOrDefaultAsync(o => o.OrderId == id);
+            .Where(o => o.OrderId == id)
+            .Select(o => new {
+                o.OrderId, o.ClientId, o.EmployeeId, o.OrderDate, o.TotalAmount, o.Status,
+                Client = new { o.Client.ClientId, o.Client.CompanyName, o.Client.DiscountPercent },
+                Employee = new { o.Employee.EmployeeId, o.Employee.FirstName, o.Employee.LastName },
+                OrderItems = o.OrderItems.Select(oi => new {
+                    oi.OrderItemId, oi.ProductId, oi.Quantity, oi.UnitPrice, oi.DiscountPercent, oi.LineTotal,
+                    Product = new { oi.Product.ProductId, oi.Product.Name, oi.Product.Unit }
+                })
+            })
+            .FirstOrDefaultAsync();
 
         if (order == null) return NotFound();
-        return order;
+        return Ok(order);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Order>> Create(CreateOrderDto dto)
+    public async Task<ActionResult> Create(CreateOrderDto dto)
     {
         try
         {
             var order = await _orderService.CreateOrderAsync(dto);
-
-            var result = await _context.Orders
-                .Include(o => o.Client)
-                .Include(o => o.Employee)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                .FirstAsync(o => o.OrderId == order.OrderId);
-
-            return CreatedAtAction(nameof(GetById), new { id = result.OrderId }, result);
+            return CreatedAtAction(nameof(GetById), new { id = order.OrderId }, new { order.OrderId, order.TotalAmount });
         }
         catch (KeyNotFoundException ex)
         {

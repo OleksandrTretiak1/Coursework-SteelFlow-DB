@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteelFlow — Система обліку металобази</title>
+    <meta name="description" content="SteelFlow — система обліку для металобази. Управління товарами, клієнтами та замовленнями.">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+    <div class="login-card">
+        <div class="logo">⚙ SteelFlow</div>
+        <div class="subtitle">Система обліку металобази</div>
+        <div class="form-group">
+            <label>Оберіть працівника</label>
+            <select id="employeeSelect" class="form-control">
+                <option value="">Завантаження...</option>
+            </select>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="login()">Увійти</button>
+    </div>
+</div>
+
+<div id="appLayout" class="app-layout">
+    <aside class="sidebar">
+        <div class="logo">⚙ SteelFlow</div>
+        <nav>
+            <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> Головна</div>
+            <div class="nav-item" data-page="categories"><span class="icon">📁</span> Категорії</div>
+            <div class="nav-item" data-page="products"><span class="icon">🔩</span> Товари</div>
+            <div class="nav-item" data-page="clients"><span class="icon">👥</span> Клієнти</div>
+            <div class="nav-item" data-page="employees"><span class="icon">🧑‍💼</span> Працівники</div>
+            <div class="nav-item" data-page="orders"><span class="icon">📋</span> Замовлення</div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-name" id="currentUser"></div>
+            <button class="logout-btn" onclick="logout()">Вийти з системи</button>
+        </div>
+    </aside>
+
+    <main class="main-content" id="mainContent"></main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle"></h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer" id="modalFooter"></div>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
