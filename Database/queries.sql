@@ -5,7 +5,8 @@
 
 -- 1. Простий запит на вибірку
 SELECT product_id, name, price_per_unit, stock_quantity
-FROM products;
+FROM products
+ORDER BY product_id;
 
 -- 2. Запит з використанням BETWEEN...AND
 SELECT name, price_per_unit
