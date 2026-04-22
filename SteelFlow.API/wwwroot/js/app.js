@@ -44,6 +44,18 @@ function money(v) {
     return `<span class="money">${Number(v).toLocaleString('uk-UA', { minimumFractionDigits: 2 })} ₴</span>`;
 }
 
+function searchBar() {
+    return `<input class="form-control" id="tableSearch" placeholder="Пошук..." oninput="filterTable()" style="width:260px;">`;
+}
+
+function filterTable() {
+    const q = document.getElementById('tableSearch').value.toLowerCase();
+    document.querySelectorAll('#mainContent tbody tr').forEach(function(row) {
+        var text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+    });
+}
+
 async function loadEmployeeSelect() {
     const emps = await api('/employees');
     const sel = document.getElementById('employeeSelect');
@@ -104,7 +116,7 @@ async function renderDashboard() {
 async function renderCategories() {
     const cats = await api('/categories');
     document.getElementById('mainContent').innerHTML = `<div class="page">
-        <div class="page-header"><h1>Категорії</h1><button class="btn btn-primary" onclick="openCategoryForm()">+ Додати</button></div>
+        <div class="page-header"><h1>Категорії</h1><div style="display:flex;gap:8px;align-items:center">${searchBar()}<button class="btn btn-primary" onclick="openCategoryForm()">+ Додати</button></div></div>
         <div class="card"><div class="card-body"><table><thead><tr><th>ID</th><th>Назва</th><th>Опис</th><th>Дії</th></tr></thead>
         <tbody>${cats.map(c => `<tr><td>${c.categoryId}</td><td>${c.name}</td><td>${c.description || '—'}</td>
         <td class="actions"><button class="btn btn-secondary btn-sm" onclick="openCategoryForm(${c.categoryId},'${esc(c.name)}','${esc(c.description || '')}')">✏️</button>
@@ -140,7 +152,7 @@ async function renderProducts() {
     const [prods, cats] = await Promise.all([api('/products'), api('/categories')]);
     cache.categories = cats;
     document.getElementById('mainContent').innerHTML = `<div class="page">
-        <div class="page-header"><h1>Товари</h1><button class="btn btn-primary" onclick="openProductForm()">+ Додати</button></div>
+        <div class="page-header"><h1>Товари</h1><div style="display:flex;gap:8px;align-items:center">${searchBar()}<button class="btn btn-primary" onclick="openProductForm()">+ Додати</button></div></div>
         <div class="card"><div class="card-body"><table><thead><tr><th>ID</th><th>Назва</th><th>Категорія</th><th>Од.</th><th>Ціна</th><th>Залишок</th><th>Дії</th></tr></thead>
         <tbody>${prods.map(p => `<tr><td>${p.productId}</td><td>${p.name}</td><td>${p.category?.name || ''}</td><td>${p.unit}</td>
         <td>${money(p.pricePerUnit)}</td><td>${p.stockQuantity}</td>
@@ -187,7 +199,7 @@ async function deleteProduct(id) {
 async function renderClients() {
     const cls = await api('/clients');
     document.getElementById('mainContent').innerHTML = `<div class="page">
-        <div class="page-header"><h1>Клієнти</h1><button class="btn btn-primary" onclick="openClientForm()">+ Додати</button></div>
+        <div class="page-header"><h1>Клієнти</h1><div style="display:flex;gap:8px;align-items:center">${searchBar()}<button class="btn btn-primary" onclick="openClientForm()">+ Додати</button></div></div>
         <div class="card"><div class="card-body"><table><thead><tr><th>ID</th><th>Компанія</th><th>Контакт</th><th>Телефон</th><th>Email</th><th>Знижка</th><th>Дії</th></tr></thead>
         <tbody>${cls.map(c => `<tr><td>${c.clientId}</td><td>${c.companyName}</td><td>${c.contactPerson || '—'}</td>
         <td>${c.phone || '—'}</td><td>${c.email || '—'}</td><td><span class="badge badge-success">${c.discountPercent}%</span></td>
@@ -228,7 +240,7 @@ async function deleteClient(id) {
 async function renderEmployees() {
     const emps = await api('/employees');
     document.getElementById('mainContent').innerHTML = `<div class="page">
-        <div class="page-header"><h1>Працівники</h1><button class="btn btn-primary" onclick="openEmployeeForm()">+ Додати</button></div>
+        <div class="page-header"><h1>Працівники</h1><div style="display:flex;gap:8px;align-items:center">${searchBar()}<button class="btn btn-primary" onclick="openEmployeeForm()">+ Додати</button></div></div>
         <div class="card"><div class="card-body"><table><thead><tr><th>ID</th><th>Прізвище</th><th>Ім'я</th><th>Посада</th><th>Телефон</th><th>Дата найму</th><th>Дії</th></tr></thead>
         <tbody>${emps.map(e => `<tr><td>${e.employeeId}</td><td>${e.lastName}</td><td>${e.firstName}</td><td>${e.position}</td>
         <td>${e.phone || '—'}</td><td>${e.hireDate}</td>
@@ -266,7 +278,7 @@ async function deleteEmployee(id) {
 async function renderOrders() {
     const orders = await api('/orders');
     document.getElementById('mainContent').innerHTML = `<div class="page">
-        <div class="page-header"><h1>Замовлення</h1><button class="btn btn-primary" onclick="openOrderForm()">+ Нове замовлення</button></div>
+        <div class="page-header"><h1>Замовлення</h1><div style="display:flex;gap:8px;align-items:center">${searchBar()}<button class="btn btn-primary" onclick="openOrderForm()">+ Нове замовлення</button></div></div>
         <div class="card"><div class="card-body"><table><thead><tr><th>ID</th><th>Клієнт</th><th>Працівник</th><th>Дата</th><th>Сума</th><th>Статус</th><th>Дії</th></tr></thead>
         <tbody>${orders.map(o => `<tr><td>#${o.orderId}</td><td>${o.client?.companyName || ''}</td>
         <td>${o.employee ? o.employee.lastName + ' ' + o.employee.firstName : ''}</td>
