@@ -58,7 +58,7 @@ a { color: var(--accent); text-decoration: none; }
     border-radius: 16px;
     padding: 48px 40px;
     width: 100%;
-    max-width: 420px;
+    max-width: 480px;
     box-shadow: var(--shadow);
     text-align: center;
 }
@@ -544,3 +544,55 @@ tbody tr:hover {
 }
 
 .money { font-variant-numeric: tabular-nums; }
+
+.confirm-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+}
+
+.confirm-dialog {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.confirm-dialog .confirm-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.confirm-dialog .confirm-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.confirm-dialog .confirm-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.confirm-dialog .confirm-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.confirm-dialog .confirm-buttons .btn {
+    min-width: 120px;
+    justify-content: center;
+}
+

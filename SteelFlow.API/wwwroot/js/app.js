@@ -56,6 +56,25 @@ function filterTable() {
     });
 }
 
+function confirmDialog(message) {
+    return new Promise(function(resolve) {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        overlay.innerHTML = `<div class="confirm-dialog">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title">Підтвердження</div>
+            <div class="confirm-text">${message}</div>
+            <div class="confirm-buttons">
+                <button class="btn btn-secondary" id="confirmNo">Скасувати</button>
+                <button class="btn btn-danger" id="confirmYes">Видалити</button>
+            </div>
+        </div>`;
+        document.body.appendChild(overlay);
+        overlay.querySelector('#confirmYes').onclick = function() { overlay.remove(); resolve(true); };
+        overlay.querySelector('#confirmNo').onclick = function() { overlay.remove(); resolve(false); };
+    });
+}
+
 async function loadEmployeeSelect() {
     const emps = await api('/employees');
     const sel = document.getElementById('employeeSelect');
@@ -143,7 +162,7 @@ async function saveCategory(id) {
 }
 
 async function deleteCategory(id) {
-    if (!confirm('Видалити категорію?')) return;
+    if (!await confirmDialog('Ви дійсно хочете видалити цю категорію?')) return;
     try { await api(`/categories/${id}`, { method: 'DELETE' }); toast('Видалено'); renderCategories(); }
     catch (e) { toast('Не можна видалити: є товари', 'error'); }
 }
@@ -191,7 +210,7 @@ async function saveProduct(id) {
 }
 
 async function deleteProduct(id) {
-    if (!confirm('Видалити товар?')) return;
+    if (!await confirmDialog('Ви дійсно хочете видалити цей товар?')) return;
     try { await api(`/products/${id}`, { method: 'DELETE' }); toast('Видалено'); renderProducts(); }
     catch (e) { toast('Не можна видалити: є замовлення', 'error'); }
 }
@@ -232,7 +251,7 @@ async function saveClient(id) {
 }
 
 async function deleteClient(id) {
-    if (!confirm('Видалити клієнта?')) return;
+    if (!await confirmDialog('Ви дійсно хочете видалити цього клієнта?')) return;
     try { await api(`/clients/${id}`, { method: 'DELETE' }); toast('Видалено'); renderClients(); }
     catch (e) { toast('Не можна видалити: є замовлення', 'error'); }
 }
@@ -270,7 +289,7 @@ async function saveEmployee(id) {
 }
 
 async function deleteEmployee(id) {
-    if (!confirm('Видалити працівника?')) return;
+    if (!await confirmDialog('Ви дійсно хочете видалити цього працівника?')) return;
     try { await api(`/employees/${id}`, { method: 'DELETE' }); toast('Видалено'); renderEmployees(); }
     catch (e) { toast('Не можна видалити: є замовлення', 'error'); }
 }
@@ -386,7 +405,7 @@ async function viewOrder(id) {
 }
 
 async function deleteOrder(id) {
-    if (!confirm('Видалити замовлення?')) return;
+    if (!await confirmDialog('Ви дійсно хочете видалити це замовлення?')) return;
     await api(`/orders/${id}`, { method: 'DELETE' }); toast('Видалено'); renderOrders();
 }
 
