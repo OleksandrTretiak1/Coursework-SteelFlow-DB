@@ -34,6 +34,13 @@ public class ClientsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Client>> Create(CreateClientDto dto)
     {
+        if (await _context.Clients.AnyAsync(c => c.CompanyName == dto.CompanyName))
+            return Conflict(new { error = "Клієнт з такою назвою компанії вже існує" });
+        if (!string.IsNullOrEmpty(dto.Phone) && await _context.Clients.AnyAsync(c => c.Phone == dto.Phone))
+            return Conflict(new { error = "Клієнт з таким номером телефону вже існує" });
+        if (!string.IsNullOrEmpty(dto.Email) && await _context.Clients.AnyAsync(c => c.Email == dto.Email))
+            return Conflict(new { error = "Клієнт з такою електронною поштою вже існує" });
+
         var client = new Client
         {
             CompanyName = dto.CompanyName,

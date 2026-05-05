@@ -34,6 +34,9 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Category>> Create(CreateCategoryDto dto)
     {
+        if (await _context.Categories.AnyAsync(c => c.Name == dto.Name))
+            return Conflict(new { error = "Категорія з такою назвою вже існує" });
+
         var category = new Category
         {
             Name = dto.Name,

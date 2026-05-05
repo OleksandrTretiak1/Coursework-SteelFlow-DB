@@ -156,9 +156,11 @@ function openCategoryForm(id, name, desc) {
 async function saveCategory(id) {
     const body = { name: document.getElementById('fName').value, description: document.getElementById('fDesc').value || null };
     if (!body.name) return toast('Введіть назву', 'error');
-    if (id) await api(`/categories/${id}`, { method: 'PUT', body });
-    else await api('/categories', { method: 'POST', body });
-    closeModal(); toast(id ? 'Категорію оновлено' : 'Категорію додано'); renderCategories();
+    try {
+        if (id) await api(`/categories/${id}`, { method: 'PUT', body });
+        else await api('/categories', { method: 'POST', body });
+        closeModal(); toast(id ? 'Категорію оновлено' : 'Категорію додано'); renderCategories();
+    } catch (e) { toast(e.message, 'error'); }
 }
 
 async function deleteCategory(id) {
@@ -204,9 +206,11 @@ async function saveProduct(id) {
         unit: document.getElementById('fUnit').value, pricePerUnit: +document.getElementById('fPrice').value,
         stockQuantity: +document.getElementById('fStock').value };
     if (!body.name || !body.pricePerUnit) return toast('Заповніть обовʼязкові поля', 'error');
-    if (id) await api(`/products/${id}`, { method: 'PUT', body });
-    else await api('/products', { method: 'POST', body });
-    closeModal(); toast(id ? 'Товар оновлено' : 'Товар додано'); renderProducts();
+    try {
+        if (id) await api(`/products/${id}`, { method: 'PUT', body });
+        else await api('/products', { method: 'POST', body });
+        closeModal(); toast(id ? 'Товар оновлено' : 'Товар додано'); renderProducts();
+    } catch (e) { toast(e.message, 'error'); }
 }
 
 async function deleteProduct(id) {
@@ -245,9 +249,11 @@ async function saveClient(id) {
         phone: document.getElementById('fPhone').value || null, email: document.getElementById('fEmail').value || null,
         discountPercent: +document.getElementById('fDiscount').value };
     if (!body.companyName) return toast('Введіть назву компанії', 'error');
-    if (id) await api(`/clients/${id}`, { method: 'PUT', body });
-    else await api('/clients', { method: 'POST', body });
-    closeModal(); toast(id ? 'Клієнта оновлено' : 'Клієнта додано'); renderClients();
+    try {
+        if (id) await api(`/clients/${id}`, { method: 'PUT', body });
+        else await api('/clients', { method: 'POST', body });
+        closeModal(); toast(id ? 'Клієнта оновлено' : 'Клієнта додано'); renderClients();
+    } catch (e) { toast(e.message, 'error'); }
 }
 
 async function deleteClient(id) {
@@ -283,9 +289,11 @@ async function saveEmployee(id) {
     const body = { firstName: document.getElementById('fFirst').value, lastName: document.getElementById('fLast').value,
         position: document.getElementById('fPos').value, phone: document.getElementById('fPhone').value || null };
     if (!body.firstName || !body.lastName || !body.position) return toast('Заповніть обовʼязкові поля', 'error');
-    if (id) await api(`/employees/${id}`, { method: 'PUT', body });
-    else await api('/employees', { method: 'POST', body });
-    closeModal(); toast(id ? 'Працівника оновлено' : 'Працівника додано'); renderEmployees();
+    try {
+        if (id) await api(`/employees/${id}`, { method: 'PUT', body });
+        else await api('/employees', { method: 'POST', body });
+        closeModal(); toast(id ? 'Працівника оновлено' : 'Працівника додано'); renderEmployees();
+    } catch (e) { toast(e.message, 'error'); }
 }
 
 async function deleteEmployee(id) {

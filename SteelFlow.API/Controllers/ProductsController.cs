@@ -40,6 +40,9 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Product>> Create(CreateProductDto dto)
     {
+        if (await _context.Products.AnyAsync(p => p.CategoryId == dto.CategoryId && p.Name == dto.Name))
+            return Conflict(new { error = "Товар з такою назвою вже існує в цій категорії" });
+
         var product = new Product
         {
             CategoryId = dto.CategoryId,

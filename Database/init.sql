@@ -46,7 +46,10 @@ CREATE TABLE products (
         CHECK (price_per_unit >= 0),
 
     CONSTRAINT chk_products_stock
-        CHECK (stock_quantity >= 0)
+        CHECK (stock_quantity >= 0),
+
+    CONSTRAINT uq_products_category_name
+        UNIQUE (category_id, name)
 );
 
 COMMENT ON TABLE  products                IS 'Каталог металопродукції';
@@ -64,7 +67,7 @@ CREATE TABLE employees (
     first_name  VARCHAR(100) NOT NULL,
     last_name   VARCHAR(100) NOT NULL,
     position    VARCHAR(100) NOT NULL,
-    phone       VARCHAR(20),
+    phone       VARCHAR(20)  UNIQUE,
     hire_date   DATE         NOT NULL DEFAULT CURRENT_DATE
 );
 
@@ -76,10 +79,10 @@ COMMENT ON COLUMN employees.position  IS 'Посада: менеджер, ком
 -- ============================================================
 CREATE TABLE clients (
     client_id      SERIAL       PRIMARY KEY,
-    company_name   VARCHAR(200) NOT NULL,
+    company_name   VARCHAR(200) NOT NULL UNIQUE,
     contact_person VARCHAR(200),
-    phone          VARCHAR(20),
-    email          VARCHAR(100),
+    phone          VARCHAR(20)  UNIQUE,
+    email          VARCHAR(100) UNIQUE,
     discount_percent NUMERIC(5,2) NOT NULL DEFAULT 0,
 
     CONSTRAINT chk_clients_discount

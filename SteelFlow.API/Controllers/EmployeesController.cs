@@ -34,6 +34,9 @@ public class EmployeesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Employee>> Create(CreateEmployeeDto dto)
     {
+        if (!string.IsNullOrEmpty(dto.Phone) && await _context.Employees.AnyAsync(e => e.Phone == dto.Phone))
+            return Conflict(new { error = "Працівник з таким номером телефону вже існує" });
+
         var employee = new Employee
         {
             FirstName = dto.FirstName,
